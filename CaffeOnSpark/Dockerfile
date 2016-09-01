@@ -50,7 +50,7 @@ RUN cd $(pwd) && git clone https://github.com/yahoo/CaffeOnSpark.git --recursive
 ENV CAFFE_ON_SPARK $(pwd)/CaffeOnSpark
 
 # Install Spark and Hadoop
-RUN ${CAFFE_ON_SPARK}/scripts/local-setup-hadoop.sh \
+RUN ${CAFFE_ON_SPARK}/scripts/local-setup-hadoop.sh && \
   ${CAFFE_ON_SPARK}/scripts/local-setup-spark.sh \
 
 ENV HADOOP_HOME $(pwd)/hadoop-2.6.4
@@ -58,16 +58,16 @@ ENV SPARK_HOME $(pwd)/spark-1.6.0-bin-hadoop2.6
 ENV PATH ${HADOOP_HOME}/bin:${SPARK_HOME}/bin:${SPARK_HOME}/sbin:${PATH}
 
 # Configure CaffeOnSpark
-RUN pushd ${CAFFE_ON_SPARK}/caffe-public/ \
-  cat python/requirements.txt | xargs -n1 pip install
-  cp Makefile.config.example Makefile.config \
-  echo "INCLUDE_DIRS += ${JAVA_HOME}/include" >> Makefile.config \
-  echo "CPU_ONLY := 1" >> Makefile.config \
+RUN pushd ${CAFFE_ON_SPARK}/caffe-public/ && \
+  cat python/requirements.txt | xargs -n1 pip install && \
+  cp Makefile.config.example Makefile.config && \
+  echo "INCLUDE_DIRS += ${JAVA_HOME}/include" >> Makefile.config && \
+  echo "CPU_ONLY := 1" >> Makefile.config && \
   popd
 
 # Build CaffeOnSpark
-RUN pushd ${CAFFE_ON_SPARK} \
-  make build \
+RUN pushd ${CAFFE_ON_SPARK} && \
+  make build && \
   popd
 
 ENV LD_LIBRARY_PATH ${CAFFE_ON_SPARK}/caffe-public/distribute/lib:${CAFFE_ON_SPARK}/caffe-distri/distribute/lib
