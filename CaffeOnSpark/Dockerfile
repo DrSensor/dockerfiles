@@ -31,7 +31,8 @@ RUN apt-get update && apt-get install -y \
   python-numpy \
   maven \
   software-properties-common \
-  gfortran > /dev/null
+  gfortran > /dev/null && \
+  pip install --upgrade pip
 
 ## Install Oracle Java 8
 # https://github.com/dockerfile/java/blob/master/oracle-java8/Dockerfile
@@ -51,7 +52,7 @@ ENV CAFFE_ON_SPARK ${pwd}/CaffeOnSpark
 
 # Configure CaffeOnSpark
 RUN cd ${CAFFE_ON_SPARK}/caffe-public/ && \
-  cat python/requirements.txt | xargs -n1 pip install && \
+  pip install -U -r python/requirements.txt && \
   cp Makefile.config.example Makefile.config && \
   echo "INCLUDE_DIRS += ${JAVA_HOME}/include" >> Makefile.config && \
   echo "CPU_ONLY := 1" >> Makefile.config
