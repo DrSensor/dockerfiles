@@ -54,7 +54,8 @@ ENV CAFFE_ON_SPARK ${pwd}/CaffeOnSpark
 RUN cd ${CAFFE_ON_SPARK}/caffe-public/ && \
   pip install -U -r python/requirements.txt && \
   cp Makefile.config.example Makefile.config && \
-  echo "INCLUDE_DIRS += ${JAVA_HOME}/include" >> Makefile.config && \
+  echo "INCLUDE_DIRS := ${JAVA_HOME}/include ${PYTHON_INCLUDE} /usr/local/include /usr/include/hdf5/serial/" >> Makefile.config && \
+  echo "LIBRARY_DIRS := ${PYTHON_LIB} /usr/local/lib /usr/lib /usr/lib/x86_64-linux-gnu/hdf5/serial/" >> Makefile.config && \
   echo "CPU_ONLY := 1" >> Makefile.config
 
 # Install Spark and Hadoop
