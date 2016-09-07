@@ -34,6 +34,24 @@ RUN apt-get update && apt-get install -y \
   gfortran > /dev/null && \
   pip install --upgrade pip
 
+# Clone Caffe repo and move into it
+RUN cd ${pwd} && git clone https://github.com/BVLC/caffe.git && cd caffe && \
+# Install python dependencies
+  pip install -U -r python/requirements.txt
+
+# Move into Caffe repo
+RUN cd ${pwd}/caffe && \
+# Make and move into build directory
+  mkdir build && cd build && \
+# CMake
+  cmake .. && \
+# Make
+  make -j"$(nproc)" all && \
+  make install
+
+# Add to Python path
+ENV PYTHONPATH=/root/caffe/python:$PYTHONPATH
+
 ## Install Oracle Java 8
 # https://github.com/dockerfile/java/blob/master/oracle-java8/Dockerfile
 RUN \
