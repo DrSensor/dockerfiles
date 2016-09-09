@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
   libatlas-dev \
   libboost-all-dev \
   libopencv-dev \
-  libprotobuf-dev \
+  libprotobuf-dev=2.5.0 \
   libgoogle-glog-dev \
   libgflags-dev \
   protobuf-compiler \
@@ -34,23 +34,23 @@ RUN apt-get update && apt-get install -y \
   gfortran > /dev/null && \
   pip install --upgrade pip
 
-# Clone Caffe repo and move into it
-RUN cd ${pwd} && git clone https://github.com/BVLC/caffe.git && cd caffe && \
-# Install python dependencies
-  pip install -U -r python/requirements.txt
-
-# Move into Caffe repo
-RUN cd ${pwd}/caffe && \
-# Make and move into build directory
-  mkdir build && cd build && \
-# CMake
-  cmake .. && \
-# Make
-  make -j"$(nproc)" all && \
-  make install
-
-# Add to Python path
-ENV PYTHONPATH=/root/caffe/python:$PYTHONPATH
+# # Clone Caffe repo and move into it
+# RUN cd ${pwd} && git clone https://github.com/BVLC/caffe.git && cd caffe && \
+# # Install python dependencies
+#   pip install -U -r python/requirements.txt
+#
+# # Move into Caffe repo
+# RUN cd ${pwd}/caffe && \
+# # Make and move into build directory
+#   mkdir build && cd build && \
+# # CMake
+#   cmake .. && \
+# # Make
+#   make -j"$(nproc)" all && \
+#   make install
+#
+# # Add to Python path
+# ENV PYTHONPATH=/root/caffe/python:$PYTHONPATH
 
 ## Install Oracle Java 8
 # https://github.com/dockerfile/java/blob/master/oracle-java8/Dockerfile
@@ -69,12 +69,13 @@ RUN cd ${pwd} && git clone https://github.com/yahoo/CaffeOnSpark.git --recursive
 ENV CAFFE_ON_SPARK ${pwd}/CaffeOnSpark
 
 # Configure CaffeOnSpark
+ADD requirements.txt ${CAFFE_ON_SPARK}/caffe-public/python/
 RUN cd ${CAFFE_ON_SPARK}/caffe-public/ && \
   pip install -U -r python/requirements.txt
 
-ADD Makefile.config ${CAFFE_ON_SPARK}/caffe-public/
 
 # Install Spark and Hadoop
+ADD Makefile.config ${CAFFE_ON_SPARK}/caffe-public/
 RUN bash ${CAFFE_ON_SPARK}/scripts/local-setup-hadoop.sh && \
   bash ${CAFFE_ON_SPARK}/scripts/local-setup-spark.sh \
 
