@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
   libatlas-dev \
   libboost-all-dev \
   libopencv-dev \
-  libprotobuf-dev=2.5.0 \
+  libprotobuf-dev \
   libgoogle-glog-dev \
   libgflags-dev \
   protobuf-compiler \
