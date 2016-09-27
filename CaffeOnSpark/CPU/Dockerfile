@@ -2,7 +2,7 @@
 ## https://github.com/yahoo/CaffeOnSpark/wiki/GetStarted_local
 ## https://github.com/yahoo/CaffeOnSpark/blob/master/caffe-grid/src/test/python/PythonTest.sh
 
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 MAINTAINER Fahmi Akbar Wildana <fahmi.akbar.w@mail.ugm.ac.id>
 
 ENV pwd /root
