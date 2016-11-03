@@ -60,9 +60,17 @@ ADD Makefile.config ${CAFFE_ON_SPARK}/caffe-public/
 RUN cd ${pwd} && bash ${CAFFE_ON_SPARK}/scripts/local-setup-hadoop.sh && \
   bash ${CAFFE_ON_SPARK}/scripts/local-setup-spark.sh \
 
-ENV HADOOP_HOME ${pwd}/hadoop-2.6.4
-ENV SPARK_HOME ${pwd}/spark-1.6.0-bin-hadoop2.6
-ENV PATH ${HADOOP_HOME}/bin:${SPARK_HOME}/bin:${SPARK_HOME}/sbin:${PATH}
+ENV HADOOP_HOME=${pwd}/hadoop-2.6.4
+ENV SPARK_HOME=${pwd}/spark-1.6.0-bin-hadoop2.6
+
+## Integrate jupyter notebook
+# https://github.com/jupyter/docker-stacks/blob/master/pyspark-notebook/Dockerfile
+ENV PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.9-src.zip
+# ENV IPYTHON_ROOT=<your python installation>
+ENV PYSPARK_PYTHON=${IPYTHON_ROOT}/bin/python
+ENV IPYTHON_OPTS="notebook --no-browser --ip=`hostname`"
+
+ENV PATH=${IPYTHON_ROOT}/bin:${HADOOP_HOME}/bin:${SPARK_HOME}/bin:${SPARK_HOME}/sbin:${PATH}
 
 # Build CaffeOnSpark
 RUN cd ${CAFFE_ON_SPARK} && \
@@ -71,7 +79,20 @@ RUN cd ${CAFFE_ON_SPARK} && \
 ENV LD_LIBRARY_PATH ${CAFFE_ON_SPARK}/caffe-public/distribute/lib:${CAFFE_ON_SPARK}/caffe-distri/distribute/lib
 # ENV LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/usr/local/cuda-7.0/lib64:/usr/local/mkl/lib/intel64/
 
+RUN cd ${CAFFE_ON_SPARK}/data/ && unzip ${CAFFE_ON_SPARK}/caffe-grid/target/caffeonsparkpythonapi.zip
+
 EXPOSE 8080 7077 8081
 
 # Set ~/caffe as working directory
 WORKDIR ${CAFFE_ON_SPARK}
+
+ENTRYPOINT ["IPYTHON=1 pyspark", \
+"--driver-library-path", "${CAFFE_ON_SPARK}/caffe-grid/target/caffe-grid-0.1-SNAPSHOT-jar-with-dependencies.jar", \
+"--driver-class-path", "${CAFFE_ON_SPARK}/caffe-grid/target/caffe-grid-0.1-SNAPSHOT-jar-with-dependencies.jar", \
+"--jars", "${CAFFE_ON_SPARK}/caffe-grid/target/caffe-grid-0.1-SNAPSHOT-jar-with-dependencies.jar", \
+"--py-files", "${CAFFE_ON_SPARK}/caffe-grid/target/caffeonsparkpythonapi.zip", \
+"--files", "${CAFFE_ON_SPARK}/data/caffe/_caffe.so", \
+"--conf", "spark.driver.extraLibraryPath=${LD_LIBRARY_PATH}", \
+"--conf", "spark.executorEnv.LD_LIBRARY_PATH=${LD_LIBRARY_PATH}", \
+"--conf", "spark.executorEnv.DYLD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
+]
