@@ -8,7 +8,7 @@ if [ "${AUTHORIZED_KEYS}" != "**None**" ]; then
     chmod 600 /root/.ssh/authorized_keys
     IFS=$'\n'
     arr=$(echo ${AUTHORIZED_KEYS} | tr "," "\n")
-    for x in $arrsdsdasdasds
+    for x in $arr
     do
         x=$(echo $x |sed -e 's/^ *//' -e 's/ *$//')
         cat /root/.ssh/authorized_keys | grep "$x" >/dev/null 2>&1
@@ -19,4 +19,4 @@ if [ "${AUTHORIZED_KEYS}" != "**None**" ]; then
     done
 fi
 
-exec /usr/sbin/sshd -D
+/usr/sbin/sshd -D
