@@ -1,4 +1,4 @@
-FROM node
+FROM node:slim
 MAINTAINER Fahmi Akbar Wildana <fahmi.akbar.w@mail.ugm.ac.id>
 
 # ------------------------------------------------------------------------------
@@ -9,11 +9,11 @@ RUN apt-get update \
     python-pip python-dev \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
- && pip3 install chaperone \
- && pip install jupyter \
+ && pip install jupyter chaperone \
  && python3 -m pip install ipykernel \
  && python3 -m ipykernel install --user \
  && mkdir /etc/chaperone.d /cloud9 /var/run/sshd
+ # && pip3 install chaperone \
 
 # ------------------------------------------------------------------------------
 # Get cloud9 source and install
