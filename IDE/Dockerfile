@@ -9,11 +9,10 @@ RUN apt-get update \
     python-pip python-dev \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
- && pip install jupyter chaperone \
- && python3 -m pip install ipykernel \
- && python3 -m ipykernel install --user \
+ && pip3 install chaperone jupyter \
+ && python2 -m pip install ipykernel \
+ && python2 -m ipykernel install --user \
  && mkdir /etc/chaperone.d /cloud9 /var/run/sshd
- # && pip3 install chaperone \
 
 # ------------------------------------------------------------------------------
 # Get cloud9 source and install
