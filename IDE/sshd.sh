@@ -19,4 +19,4 @@ if [ "${AUTHORIZED_KEYS}" != "**None**" ]; then
     done
 fi
 
-/usr/sbin/sshd -D
+exec /usr/sbin/sshd -D
